@@ -1,0 +1,20 @@
+{
+  "item": {
+    "name": "阴影的决意",
+    "type": "ancestor"
+  },
+  "price": {
+    "min": 10,
+    "max": 2000
+  },
+  "grade": "Tier4",
+  "advantage": [
+    {
+      "name": "技能冷却时间",
+      "grade": "Tier4"
+    }
+  ],
+  "sort": "latest",
+  "language": "cn",
+  "output_dir": "output"
+}

@@ -1,0 +1,32 @@
+{
+  "item": {
+    "name": "怪物猎人",
+    "type": "transcendent"
+  },
+  "price": {
+    "min": 100,
+    "max": 5000
+  },
+  "quality": {
+    "min": 390,
+    "max": 400
+  },
+  "subperks": [
+    "强化大容量弹夹"
+  ],
+  "ability1": {
+    "min": 30,
+    "max": 150
+  },
+  "ability2": {
+    "min": 0,
+    "max": 150
+  },
+  "ability3": {
+    "min": 0,
+    "max": 150
+  },
+  "sort": "latest",
+  "language": "cn",
+  "output_dir": "output"
+}
