@@ -298,11 +298,54 @@ tfd-market-v2/
 
 ## 9. QQ 机器人（NapCat / OneBot v11）
 
-NapCat HTTP Server 默认地址 `http://127.0.0.1:3000`，token 见
-`<QQ安装目录>\resources\app\napcat\config\onebot11_<QQ号>.json`。
+NapCat HTTP Server 默认地址 `http://127.0.0.1:3000`。安装、版本要求与 OneBot 配置见 [9.1](#91-napcat-安装与配置)。
+
+### 9.1 NapCat 安装与配置
+
+本项目在 **NapCat Shell 构建 52230**（Windows 一键包 `NapCat.52230.Shell`）上开发与验证；
+其它 Shell 版本只要 OneBot v11 接口一致也能用，HTTP 调用格式见
+[docs/napcat-http-api.md](docs/napcat-http-api.md)。
+
+**1) 安装**：从 NapCat 官方发布页下载 Windows Shell 一键包，解压后运行 `napcat.quick.bat`。
+该脚本实际执行 `NapCatWinBootMain.exe <QQ号>`，首次启动需要扫码登录；登录过一次后，
+把脚本里的 QQ 号改成自己的即可快速启动。
+
+**2) OneBot 配置**：编辑
+`<NapCat目录>\versions\<QQ版本>-<构建号>\resources\app\napcat\config\onebot11_<QQ号>.json`，
+或在 NapCat WebUI（默认 `http://127.0.0.1:6099`）里修改网络配置：
+
+```json
+{
+  "network": {
+    "httpServers": [
+      {
+        "enable": true,
+        "name": "TFD 机器人",
+        "host": "127.0.0.1",
+        "port": 3000,
+        "enableCors": false,
+        "enableWebsocket": true,
+        "messagePostFormat": "array",
+        "token": "<TOKEN>"
+      }
+    ]
+  },
+  "enableLocalFile2Url": false
+}
+```
+
+| 字段 | 要求 |
+|---|---|
+| `enable` | `true`，否则不监听 |
+| `host` / `port` | 默认 `127.0.0.1:3000`，需与 `--url` 一致 |
+| `enableWebsocket` | 必须 `true`：事件走 WS，发消息走 HTTP，二者共用 3000 端口 |
+| `messagePostFormat` | `array`，代码按消息段数组解析 |
+| `token` | 与启动时传入的 `NAPCAT_TOKEN` 完全一致 |
+
+**3) 重启 NapCat 并自检**：
 
 ```powershell
-$env:NAPCAT_TOKEN = "<token>"
+$env:NAPCAT_TOKEN = "<TOKEN>"
 .\.venv\Scripts\python.exe -m qqbot.check_napcat
 .\.venv\Scripts\python.exe -m qqbot.check_napcat --send-private <QQ号>
 ```
@@ -311,9 +354,9 @@ $env:NAPCAT_TOKEN = "<token>"
 - 自检脚本：[qqbot/check_napcat.py](qqbot/check_napcat.py)
 - 接口文档与实测经验：[docs/napcat-http-api.md](docs/napcat-http-api.md)
 
-> 注意：本机 NapCat 4.x 要求参数**平铺在 body 顶层**，不能套 `{"action","params"}`。
+> 注意：NapCat 4.x 起要求参数**平铺在 body 顶层**，不能套 `{"action","params"}`。
 
-### 9.1 配置
+### 9.2 配置
 
 机器人、后台与定时任务的可调参数都在根目录 `config.json`。仓库只提供模板，首次运行先复制一份：
 
@@ -336,7 +379,7 @@ Copy-Item config.example.json config.json
 | `bark_*` | 手机推送默认参数（冷却、铃声等级等） |
 | `flip_*` | 倒卖利润计算参数（手续费、税率、冷却） |
 
-### 9.2 启动市场推送机器人
+### 9.3 启动市场推送机器人
 
 NapCat 的 `httpServers[0]` 打开 `enableWebsocket: true` 后，WebSocket 与 HTTP
 共用 `3000` 端口：事件走 `ws://127.0.0.1:3000/`，发消息仍走 HTTP。
@@ -406,7 +449,7 @@ QQ 私聊命令：
 - 数据：`data/qqbot.db`（SQLite，WAL），日志 `logs/qqbot.log`。
 - 二次开发、并发模型、存储设计与安全说明：[docs/qqbot-development.md](docs/qqbot-development.md)
 
-### 9.3 登录与采购（v2 写操作）
+### 9.4 登录与采购（v2 写操作）
 
 登录提供 **3 种方式**，按环境选择：
 
